@@ -1,0 +1,5 @@
+.build/
+.DS_Store
+CrossPlatform/node_modules/
+CrossPlatform/dist/
+*.log

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; media-src 'self' blob:; script-src 'self'; style-src 'self';"
+    >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HandMirror</title>
+    <link rel="stylesheet" href="./mirror.css">
+  </head>
+  <body>
+    <main class="mirror-window" aria-label="HandMirror">
+      <div class="mirror-rim">
+        <video id="cameraPreview" autoplay playsinline muted></video>
+        <div class="mirror-glass"></div>
+        <div class="mirror-shine"></div>
+      </div>
+    </main>
+    <script src="./renderer.js"></script>
+  </body>
+</html>

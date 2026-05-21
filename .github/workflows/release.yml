@@ -1,0 +1,94 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS
+            runner: macos-latest
+            command: npm run dist:mac -- --publish=never
+            artifact: handmirror-macos
+          - name: Windows
+            runner: windows-latest
+            command: npm run dist:win -- --publish=never
+            artifact: handmirror-windows
+
+    defaults:
+      run:
+        working-directory: CrossPlatform
+
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: CrossPlatform/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build release assets
+        run: ${{ matrix.command }}
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            CrossPlatform/dist/*.dmg
+            CrossPlatform/dist/*.zip
+            CrossPlatform/dist/*.exe
+            CrossPlatform/dist/*.blockmap
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download release assets
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Write release notes
+        run: |
+          cat > release-notes.md <<'NOTES'
+          HandMirror beta release.
+
+          This is an unsigned beta. Windows SmartScreen and macOS Gatekeeper may show warnings.
+
+          HandMirror only displays the local camera preview. It does not record or upload camera video.
+          NOTES
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" release-assets/* --clobber
+          else
+            gh release create "$TAG_NAME" release-assets/* --title "HandMirror $TAG_NAME" --notes-file release-notes.md --prerelease
+          fi
