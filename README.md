@@ -4,7 +4,15 @@
 
 ## Download
 
-공개 배포는 GitHub Releases를 기준으로 준비했습니다. 첫 beta는 unsigned build라서 Windows SmartScreen이나 macOS Gatekeeper 경고가 뜰 수 있습니다.
+사용자는 소스 코드를 받을 필요가 없습니다. [Latest Release](https://github.com/sogom/HandMirror/releases/latest)에서 운영체제에 맞는 설치 파일을 받으면 됩니다.
+
+- Windows: `HandMirror Setup 0.1.0.exe` 권장, 설치 없이 써보려면 `HandMirror 0.1.0.exe`
+- macOS Apple Silicon: `HandMirror-0.1.0-arm64.dmg`
+- macOS Intel: `HandMirror-0.1.0.dmg`
+
+GitHub가 자동으로 보여주는 `Source code (zip)`과 `Source code (tar.gz)`는 개발자용입니다. 앱만 쓰려면 위 설치 파일을 받으면 됩니다.
+
+첫 beta는 unsigned build라서 Windows SmartScreen이나 macOS Gatekeeper 경고가 뜰 수 있습니다.
 
 ## Features
 
